@@ -2,4 +2,5 @@
 사용모듈
 - pandas
 - matplotlib
-- seaborn
+- plotly
+- numpy
