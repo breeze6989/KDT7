@@ -1,0 +1,126 @@
+{% extends "base.html" %}
+{% block content %}
+<!-- ▽▽▽  planet-style DUNLAB 로고  ▽▽▽ -->
+<style>
+  :root { --b: 0.22em; }          /* 선 굵기 = 글꼴 두께의 절반 정도 */
+
+  .logo {
+    font-family: "Segoe UI", sans-serif;
+    font-weight: 900;
+    font-size: 4.5rem;            /* 필요 시 크기 조정 */
+    line-height: 1;
+    color: #000;
+    position: relative;
+    display: inline-block;
+    padding: 0.35em 0.45em;       /* 글자와 테두리 간격 */
+  }
+
+  /* ── 왼쪽 아래 ㄱ ─────────────────── */
+  .logo::before, .logo::after {
+    content: "";
+    position: absolute;
+    background: #000;
+  }
+  /* 세로 막대 */
+  .logo::before {
+    left: 0;
+    top: 20;
+    width: var(--b);
+    height: 76%;
+  }
+  /* 가로 막대 (왼쪽 아래) – DU 너비만큼 */
+  .logo::after {
+    left: 0;
+    bottom: 0;
+    width: 40%;                   /* DU 영역만 덮도록 */
+    height: var(--b);
+  }
+
+  /* ── 오른쪽 위 ㄴ ─────────────────── */
+  .rb {                           /* ‘right-bracket’ dummy span */
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 100%; height: 100%;    /* 부모와 동일 크기 */
+    pointer-events: none;         /* 클릭 막대 X */
+  }
+  .rb::before, .rb::after {
+    content: "";
+    position: absolute;
+    background: #000;
+  }
+  /* 가로 막대 (AB 위쪽) */
+  .rb::before {
+    right: 0;
+    top: 0;
+    width: 40%;                   /* AB 영역만 덮도록 */
+    height: var(--b);
+  }
+  /* 세로 막대 */
+  .rb::after {
+    right: 0;
+    top: 0;
+    width: var(--b);
+    height: 85%;
+  }
+</style>
+
+<div class="flex flex-col items-center mb-12">
+  <div class="logo">
+    DUNLAB
+    <span class="rb"></span>       <!-- 오른쪽 위 ㄴ -->
+  </div>
+</div>
+<!-- △△△  /로고  △△△ -->
+
+
+<!-- --------- 검색 폼 --------- -->
+<div class="w-full max-w-2xl">
+  <form action="/search" method="post" class="flex space-x-2 mb-6">
+    <select name="server" class="border p-2 rounded">
+      <option value="all">전체</option>
+      <option value="모험단">모험단</option>
+      <option value="cain">카인</option><option value="diregie">디레지에</option>
+      <option value="siroco">시로코</option><option value="prey">프레이</option>
+      <option value="bakal">바칼</option><option value="casillas">카시야스</option>
+    </select>
+    <input name="name" placeholder="닉네임 / 모험단" class="flex-grow border p-2 rounded">
+    <button class="bg-blue-600 text-white px-4 rounded">검색</button>
+  </form>
+
+  <!-- --------- 최근 검색 10개 --------- -->
+  {% if recent %}
+  <h3 class="text-lg font-semibold mb-2">최근 검색</h3>
+  <div class="grid grid-cols-2 gap-2 mb-6">
+    {% for ch in recent %}
+      <a href="/character/{{ ch.id }}"
+         class="border rounded px-2 py-1 truncate hover:bg-gray-50">{{ ch.name }}</a>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  <!-- --------- 검색 결과 --------- -->
+  {% if chars %}
+  <h3 class="text-lg font-semibold mb-2">검색 결과</h3>
+  <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+    {% for ch in chars %}
+      <div class="bg-white p-4 shadow rounded">
+        <h4 class="text-xl font-bold text-indigo-600">
+          <a href="/character/{{ ch.id }}">{{ ch.name }}</a>
+        </h4>
+        <p class="text-gray-600">{{ ch.server }} | {{ ch.job_name }}</p>
+        <p class="text-gray-600">모험단: {{ ch.adventure_name or '-' }}</p>
+        <p class="mt-1">명성: {{ ch.fame }}</p>
+        {% if '크루세이더' in ch.job_name or '인챈트리스' in ch.job_name or '뮤즈' in ch.job_name %}
+          <p>버프력: {{ ch.buff_power }}</p>
+        {% else %}
+          <p>최종뎀: {{ ch.final_damage|round(2) }}</p>
+        {% endif %}
+      </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+</div>
+{% endblock %}
+
+

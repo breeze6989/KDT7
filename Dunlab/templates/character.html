@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="bg-white shadow rounded w-full max-w-4xl p-8 text-center">
+  <h2 class="text-4xl font-extrabold">{{ char.name }}</h2>
+  <p class="text-gray-600">{{ char.server }} | {{ char.job_name }} | 모험단: {{ char.adventure_name or '-' }}</p>
+
+  <!-- 탭 헤더 -->
+  <ul class="flex justify-center mt-6 border-b">
+    {% for t in ['stats','detailed','power'] %}
+      <li class="mx-3 pb-2 cursor-pointer" onclick="showTab('{{t}}')"
+          id="tab-{{t}}">{{ '스탯' if t=='stats' else '세부스탯' if t=='detailed' else '전투력' }}</li>
+    {% endfor %}
+  </ul>
+
+  <!-- 스탯 TAB -->
+  <div id="stats" class="mt-6">
+    <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
+      {% for label,val in [
+        ('물리방어율',char.physical_def), ('마법방어율',char.magical_def),
+        ('힘',char.strength), ('지능',char.intelligence),
+        ('체력',char.vitality), ('명성',char.fame),
+        ('물리공격',char.physical_attack), ('마법공격',char.magic_attack),
+        ('독립공격',char.independent_attack),
+        ('물리 크리티컬',char.crit_phy), ('마법 크리티컬',char.crit_mag),
+        ('공격 속도',char.attack_speed), ('캐스팅 속도',char.cast_speed),
+        ('화속강',char.fire_ele),('수속강',char.water_ele),
+        ('명속강',char.light_ele),('암속강',char.dark_ele)]
+      %}
+        <div class="border rounded p-2">{{label}} <span class="font-bold float-right">{{val}}</span></div>
+      {% endfor %}
+    </div>
+  </div>
+
+  <!-- 세부스탯 TAB -->
+  <div id="detailed" class="hidden mt-6">
+    {% for label,val in [
+      ('공격력 증가',char.damage_inc),
+      ('버프력',char.buff_power),
+      ('최종 데미지 증가',char.final_damage),
+      ('쿨타임 감소',char.cool_reduce)]
+    %}
+      <div class="border rounded p-4 mb-2 flex justify-between">
+        <span>{{label}}</span><span class="font-bold">{{val}}</span>
+      </div>
+    {% endfor %}
+  </div>
+
+  <!-- 전투력 TAB -->
+  <div id="power" class="hidden mt-6">
+    <p class="text-gray-500 mb-2">계산 전투력</p>
+    <p class="text-5xl font-extrabold">{{ power|round(2) }}</p>
+  </div>
+</div>
+
+<script>
+function showTab(tab){
+  ['stats','detailed','power'].forEach(t=>{
+    document.getElementById(t).classList.toggle('hidden', t!==tab);
+    document.getElementById('tab-'+t).classList.toggle('border-b-2', t===tab);
+  });
+}
+showTab('stats')
+</script>
+{% endblock %}
+
