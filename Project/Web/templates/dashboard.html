@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>화재 감지 대시 보드</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"/>
+
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="header-left">
+                <h1>화재 감지 대시 보드</h1>
+            </div>
+            <div class="header-right">
+                <a href="#" class="user-info">사용자 정보</a>
+                <a href="{{ url_for('logout') }}" class="logout">로그아웃</a>
+            </div>
+        </header>
+
+        <main class="main-content">
+            <aside class="sidebar">
+                <div class="sidebar-section">
+                    <h2>상황 로그</h2>
+                    <ul>
+                        <li>[2025-07-29 10:30] #1 구역 화재 감지 (강동구)</li>
+                        <li>[2025-07-29 10:28] #5 구역 오탐 발생 (강서구)</li>
+                        <li>[2025-07-29 10:25] #3 구역 화재 진압 완료 (강남구)</li>
+                    </ul>
+                </div>
+                <div class="sidebar-section">
+                    <h2>사건 신고 현황</h2>
+                    <ul>
+                        <li>[2025-07-29 09:00] #2 구역 소각 신고 (마포구)</li>
+                        <li>[2025-07-29 08:30] #6 구역 영농폐기물 소각 신고 (서초구)</li>
+                    </ul>
+                </div>
+            </aside>
+
+            <section class="dashboard-grid">
+                <div class="grid-header">
+                    <div>탐지 건수 <span id="totalCCTVs">0</span></div>
+                    <div>화재 <span id="fireDetections">0</span></div>
+                    <div>오탐률 <span id="falsePositives">0%</span></div>
+                    <div>배열 4 X 3</div>
+                </div>
+                <div class="grid-container">
+                    <div class="grid-item" data-cctv-id="1" data-location="강동구" data-status="정상" data-coords="[37.5502, 127.1484]" data-stream-url="https://bitdash-a.akamaihd.net/content/sintel/hls/playlist.m3u8">
+                        <span class="item-number">1</span>
+                        <p class="status 정상">정상</p>
+                        <video id="cctvVideo1" controls muted autoplay class="cctv-preview"></video>
+                        <p class="cctv-name">CCTV 1</p>
+                    </div>
+                    <div class="grid-item" data-cctv-id="2" data-location="강서구" data-status="화재감지" data-coords="[37.5623, 126.8242]" data-stream-url="https://devstreaming-cdn.apple.com/videos/streaming/examples/bipbop_4x3/bipbop_4x3_variant.m3u8">
+                        <span class="item-number">2</span>
+                        <p class="status 화재감지">화재 감지</p>
+                        <video id="cctvVideo2" controls muted autoplay class="cctv-preview"></video>
+                        <p class="cctv-name">CCTV 2</p>
+                    </div>
+                    <div class="grid-item" data-cctv-id="3" data-location="강남구" data-status="오탐" data-coords="[37.5172, 127.0473]" data-stream-url="https://bitdash-a.akamaihd.net/content/sintel/hls/playlist.m3u8">
+                        <span class="item-number">3</span>
+                        <p class="status 오탐">오탐</p>
+                        <video id="cctvVideo3" controls muted autoplay class="cctv-preview"></video>
+                        <p class="cctv-name">CCTV 3</p>
+                    </div>
+                    <div class="grid-item" data-cctv-id="4" data-location="마포구" data-status="정상" data-coords="[37.5665, 126.9015]" data-stream-url="https://devstreaming-cdn.apple.com/videos/streaming/examples/bipbop_4x3/bipbop_4x3_variant.m3u8">
+                        <span class="item-number">4</span>
+                        <p class="status 정상">정상</p>
+                        <video id="cctvVideo4" controls muted autoplay class="cctv-preview"></video>
+                        <p class="cctv-name">CCTV 4</p>
+                    </div>
+                    <div class="grid-item" data-cctv-id="5" data-location="서초구" data-status="정상" data-coords="[37.4838, 127.0325]" data-stream-url="https://bitdash-a.akamaihd.net/content/sintel/hls/playlist.m3u8">
+                        <span class="item-number">5</span>
+                        <p class="status 정상">정상</p>
+                        <video id="cctvVideo5" controls muted autoplay class="cctv-preview"></video>
+                        <p class="cctv-name">CCTV 5</p>
+                    </div>
+                    <div class="grid-item" data-cctv-id="6" data-location="송파구" data-status="화재감지" data-coords="[37.5145, 127.105]" data-stream-url="https://devstreaming-cdn.apple.com/videos/streaming/examples/bipbop_4x3/bipbop_4x3_variant.m3u8">
+                        <span class="item-number">6</span>
+                        <p class="status 화재감지">화재 감지</p>
+                        <video id="cctvVideo6" controls muted autoplay class="cctv-preview"></video>
+                        <p class="cctv-name">CCTV 6</p>
+                    </div>
+                    <div class="grid-item" data-cctv-id="7" data-location="용산구" data-status="정상" data-coords="[37.5325, 126.9903]" data-stream-url="https://bitdash-a.akamaihd.net/content/sintel/hls/playlist.m3u8">
+                        <span class="item-number">7</span>
+                        <p class="status 정상">정상</p>
+                        <video id="cctvVideo7" controls muted autoplay class="cctv-preview"></video>
+                        <p class="cctv-name">CCTV 7</p>
+                    </div>
+                    <div class="grid-item" data-cctv-id="8" data-location="성동구" data-status="정상" data-coords="[37.5635, 127.0365]" data-stream-url="https://devstreaming-cdn.apple.com/videos/streaming/examples/bipbop_4x3/bipbop_4x3_variant.m3u8">
+                        <span class="item-number">8</span>
+                        <p class="status 정상">정상</p>
+                        <video id="cctvVideo8" controls muted autoplay class="cctv-preview"></video>
+                        <p class="cctv-name">CCTV 8</p>
+                    </div>
+                    <div class="grid-item" data-cctv-id="9" data-location="광진구" data-status="정상" data-coords="[37.5385, 127.0828]" data-stream-url="https://bitdash-a.akamaihd.net/content/sintel/hls/playlist.m3u8">
+                        <span class="item-number">9</span>
+                        <p class="status 정상">정상</p>
+                        <video id="cctvVideo9" controls muted autoplay class="cctv-preview"></video>
+                        <p class="cctv-name">CCTV 9</p>
+                    </div>
+                    <div class="grid-item" data-cctv-id="10" data-location="동대문구" data-status="정상" data-coords="[37.5744, 127.0396]" data-stream-url="https://devstreaming-cdn.apple.com/videos/streaming/examples/bipbop_4x3/bipbop_4x3_variant.m3u8">
+                        <span class="item-number">10</span>
+                        <p class="status 정상">정상</p>
+                        <video id="cctvVideo10" controls muted autoplay class="cctv-preview"></video>
+                        <p class="cctv-name">CCTV 10</p>
+                    </div>
+                    <div class="grid-item" data-cctv-id="11" data-location="중랑구" data-status="화재감지" data-coords="[37.606, 127.092]" data-stream-url="https://bitdash-a.akamaihd.net/content/sintel/hls/playlist.m3u8">
+                        <span class="item-number">11</span>
+                        <p class="status 화재감지">화재 감지</p>
+                        <video id="cctvVideo11" controls muted autoplay class="cctv-preview"></video>
+                        <p class="cctv-name">CCTV 11</p>
+                    </div>
+                    <div class="grid-item" data-cctv-id="12" data-location="도봉구" data-status="정상" data-coords="[37.6688, 127.047]" data-stream-url="https://devstreaming-cdn.apple.com/videos/streaming/examples/bipbop_4x3/bipbop_4x3_variant.m3u8">
+                        <span class="item-number">12</span>
+                        <p class="status 정상">정상</p>
+                        <video id="cctvVideo12" controls muted autoplay class="cctv-preview"></video>
+                        <p class="cctv-name">CCTV 12</p>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <div id="cctvModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button">×</span>
+            <div class="modal-left-panel">
+                <h2 class="modal-cctv-title">CCTV 상세 정보 #<span id="modalCCTVId"></span></h2>
+                <video id="modalCCTVVideo" controls muted autoplay style="width: 100%; height: auto;"></video>
+                <div class="modal-cctv-details">
+                    <p><strong>CCTV ID:</strong> <span id="detailCCTVId"></span></p>
+                    <p><strong>상태:</strong> <span id="detailCCTVStatus"></span></p>
+                    <p><strong>설치 지역:</strong> <span id="detailCCTVLocation"></span></p>
+                    <p><strong>최근 감지 시간:</strong> <span id="detailCCTVLastDetected"></span></p>
+                    <p><strong>경보 횟수 (오늘):</strong> <span id="detailCCTVAlarmCount"></span></p>
+                </div>
+            </div>
+            <div class="modal-right-panel">
+                <h2 class="modal-map-title">CCTV 위치 2D Map</h2>
+                <div id="mapContainer"></div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js" defer></script>
+    
+    <script>
+        let mymap = null; 
+
+        // HLS 스트림을 로드하는 함수
+        function loadHLSStream(videoId, streamUrl) {
+            var video = document.getElementById(videoId);
+            if (!video) {
+                console.error(`Video element with ID '${videoId}' not found.`);
+                return;
+            }
+            if (Hls.isSupported()) {
+                var hls = new Hls();
+                hls.loadSource(streamUrl);
+                hls.attachMedia(video);
+                hls.on(Hls.Events.MANIFEST_PARSED, function() {
+                    video.play();
+                });
+            } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+                video.src = streamUrl;
+                video.addEventListener('loadedmetadata', function() {
+                    video.play();
+                });
+            } else {
+                console.error(`This browser does not support HLS for video element '${videoId}'.`);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const modal = document.getElementById('cctvModal');
+            const closeButton = document.querySelector('.close-button');
+            const modalCCTVId = document.getElementById('modalCCTVId');
+            const modalCCTVVideo = document.getElementById('modalCCTVVideo');
+            const detailCCTVId = document.getElementById('detailCCTVId');
+            const detailCCTVStatus = document.getElementById('detailCCTVStatus');
+            const detailCCTVLocation = document.getElementById('detailCCTVLocation');
+            const detailCCTVLastDetected = document.getElementById('detailCCTVLastDetected');
+            const detailCCTVAlarmCount = document.getElementById('detailCCTVAlarmCount');
+            const mapContainer = document.getElementById('mapContainer');
+            
+            // 모든 grid-item에 클릭 이벤트 리스너를 추가합니다.
+            document.querySelectorAll('.grid-item').forEach(item => {
+                item.addEventListener('click', () => {
+                    const cctvId = item.dataset.cctvId;
+                    const cctvStatus = item.dataset.status; 
+                    const cctvLocation = item.dataset.location;
+                    const cctvCoords = JSON.parse(item.dataset.coords);
+                    const streamUrl = item.dataset.streamUrl; // data-stream-url 값 가져오기
+                    
+                    // 모달 창에 해당 CCTV의 영상을 로드합니다.
+                    loadHLSStream('modalCCTVVideo', streamUrl);
+                    
+                    // 상세 정보 업데이트
+                    modalCCTVId.textContent = cctvId;
+                    detailCCTVId.textContent = cctvId;
+                    detailCCTVStatus.textContent = cctvStatus;
+                    detailCCTVLocation.textContent = cctvLocation;
+                    detailCCTVLastDetected.textContent = '2025-07-29 10:30'; 
+                    detailCCTVAlarmCount.textContent = '3회'; 
+
+                    // 모달을 표시
+                    modal.style.display = 'flex';
+
+                    // 지도가 이미 있다면 제거하고 다시 초기화합니다.
+                    if (mymap) { mymap.remove(); mymap = null; }
+                    
+                    // Leaflet 지도 초기화
+                    mymap = L.map(mapContainer).setView(cctvCoords, 13);
+                    
+                    // 모달이 완전히 표시된 후에 지도의 크기를 업데이트해야 지도가 깨지지 않습니다.
+                    setTimeout(() => {
+                        if (mymap) { 
+                            mymap.invalidateSize();
+                            mymap.panTo(cctvCoords); 
+                        }
+                    }, 100); 
+
+                    // OpenStreetMap 타일 레이어 추가
+                    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                    }).addTo(mymap);
+
+                    // 마커 아이콘 설정
+                    const customIcon = L.icon({
+                        iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
+                        iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png', 
+                        iconSize: [25, 41],
+                        iconAnchor: [12, 41],
+                        popupAnchor: [1, -34],
+                        tooltipAnchor: [16, -28],
+                        shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
+                        shadowSize: [41, 41]
+                    });
+
+                    // 선택된 CCTV 위치에 마커 추가
+                    const marker = L.marker(cctvCoords, {icon: customIcon}).addTo(mymap);
+                    let popupContent = `<b>CCTV #${cctvId}</b><br>${cctvLocation}<br>상태: ${cctvStatus}`;
+                    
+                    if (cctvStatus === '화재감지') {
+                        popupContent += `<br><span style="color: red; font-weight: bold;">🚨 화재 감지!</span>`;
+                    }
+                    marker.bindPopup(popupContent).openPopup();
+                });
+            });
+
+            closeButton.addEventListener('click', () => {
+                modal.style.display = 'none';
+                if (mymap) { mymap.remove(); mymap = null; }
+                modalCCTVVideo.pause();
+                modalCCTVVideo.removeAttribute('src'); // 모달 닫을 때 영상 소스 제거
+            });
+
+            window.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    modal.style.display = 'none';
+                    if (mymap) { mymap.remove(); mymap = null; }
+                    modalCCTVVideo.pause();
+                    modalCCTVVideo.removeAttribute('src');
+                }
+            });
+
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && modal.style.display === 'flex') {
+                    modal.style.display = 'none';
+                    if (mymap) { mymap.remove(); mymap = null; }
+                    modalCCTVVideo.pause();
+                    modalCCTVVideo.removeAttribute('src');
+                }
+            });
+
+            // 페이지 로드 시 대시보드 영상 로드 및 통계 업데이트
+            function updateDashboardStats() {
+                const allCCTVs = document.querySelectorAll('.grid-item');
+                let totalCount = allCCTVs.length;
+                let fireCount = 0;
+                let falsePositiveCount = 0;
+
+                allCCTVs.forEach(item => {
+                    const status = item.dataset.status;
+                    if (status === '화재감지') {
+                        fireCount++;
+                    } else if (status === '오탐') {
+                        falsePositiveCount++;
+                    }
+                    // 메인 대시보드 영상 로드
+                    const cctvId = item.dataset.cctvId;
+                    const streamUrl = item.dataset.streamUrl;
+                    loadHLSStream(`cctvVideo${cctvId}`, streamUrl);
+                });
+
+                const falsePositiveRate = totalCount > 0 ? ((falsePositiveCount / totalCount) * 100).toFixed(1) : 0;
+
+                document.getElementById('totalCCTVs').textContent = totalCount;
+                document.getElementById('fireDetections').textContent = fireCount;
+                document.getElementById('falsePositives').textContent = `${falsePositiveRate}%`;
+            }
+
+            updateDashboardStats();
+        });
+    </script>
+</body>
+</html>
