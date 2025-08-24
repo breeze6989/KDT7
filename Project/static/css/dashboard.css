@@ -1,0 +1,145 @@
+/* dashboard.css  ── base + 드롭다운 + 모달 */
+
+/* ───────── Global Reset & Font ───────── */
+*{box-sizing:border-box}
+html,body{
+  margin:0;padding:0;
+  font-family:'Segoe UI','Pretendard','Noto Sans KR',sans-serif;
+  -webkit-font-smoothing:antialiased;
+  background:#0d1b2a;
+  color:#f1f3f5;
+}
+
+/* ───────── Header ───────── */
+.header{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:14px 24px;background:#1b263b;
+}
+.header h1{
+  margin:0;font-size:26px;font-weight:700;color:#f8f9fa;
+  text-shadow:0 1px 2px rgba(0,0,0,.6);
+}
+
+/* ▼ 배열 버튼 + 드롭다운 */
+.layout-box{position:relative;display:inline-block}
+.layout-btn{
+  padding:6px 14px;border:1px solid #66d9ff;border-radius:4px;
+  background:#1b263b;color:#66d9ff;font-weight:600;cursor:pointer;
+  transition:background .15s;
+}
+.layout-btn:hover{background:#243447}
+.layout-menu{
+  display:none;position:absolute;right:0;top:110%;
+  background:#243447;border:1px solid #314057;border-radius:6px;
+  min-width:120px;list-style:none;margin:0;padding:4px 0;z-index:9999;
+}
+.layout-menu.show{display:block}
+.layout-menu li{
+  padding:10px 20px;color:#e9ecef;cursor:pointer;white-space:nowrap;
+}
+.layout-menu li:hover{background:#314057}
+
+/* ───────── Header 우측 링크 버튼 ───────── */
+.header-right a{
+  padding:6px 14px;border:1px solid #66d9ff;border-radius:4px;
+  color:#66d9ff;font-weight:600;background:transparent;
+  text-decoration:none;margin-left:12px;cursor:pointer;
+}
+.header-right a:hover{background:#243447}
+
+/* ───────── Sidebar ───────── */
+.sidebar{
+  width:260px;background:#1b263b;padding:20px;
+  border-right:1px solid #314057;color:#e9ecef
+}
+.sidebar h2{margin:0 0 10px;color:#66d9ff;font-weight:700}
+.sidebar-log li{
+  list-style:none;background:#243447;margin-bottom:6px;
+  padding:6px 8px;border-radius:4px;font-weight:500
+}
+.sidebar-log li:hover{background:#415a77}
+.all-log-link{
+  display:block;margin-top:6px;text-align:right;
+  color:#66d9ff;font-size:13px;text-decoration:none
+}
+
+/* ───────── Dashboard Grid ───────── */
+.dashboard-grid{flex:1;padding:18px;overflow-y:auto}
+.grid-header{
+  display:grid;grid-template-columns:repeat(3,1fr);
+  gap:14px;margin-bottom:12px
+}
+.grid-header div{
+  background:#fff;border-radius:6px;padding:10px 0;
+  text-align:center;font-weight:700;color:#1b263b
+}
+
+/* 그리드 레이아웃 클래스 */
+.grid-container{display:grid;gap:18px}
+.grid-container-2x2{grid-template-columns:repeat(2,1fr)}
+.grid-container-2x2 video{height:240px}           /* 2×2 전용 */
+.grid-container-4x3{grid-template-columns:repeat(4,1fr)}
+.grid-container-5x3{grid-template-columns:repeat(5,1fr)}
+.grid-container-5x4{grid-template-columns:repeat(5,1fr)}
+
+/* ───────── CCTV Card ───────── */
+.grid-item{
+  background:#fff;border:1px solid #ced4da;border-radius:8px;
+  overflow:hidden;position:relative;cursor:pointer;
+  transition:transform .15s, box-shadow .15s;
+}
+.grid-item:hover{transform:translateY(-3px);box-shadow:0 4px 8px rgba(0,0,0,.2)}
+.item-number{
+  position:absolute;top:6px;left:6px;font-size:12px;
+  font-weight:700;color:#6c757d
+}
+
+/* ───────── 상태 뱃지 – “상단 중앙” ───────── */
+.status{
+  position:absolute;top:6px;left:50%;transform:translateX(-50%);
+  font-size:12px;padding:2px 8px;border-radius:4px;
+  color:#fff;font-weight:600;white-space:nowrap
+}
+.status.정상     {background:#198754}
+.status.주의     {background:#ffc107;color:#212529}
+.status.화재감지 {background:#dc3545}
+
+video{width:100%;height:140px;object-fit:cover;background:#000}
+.cctv-name{text-align:center;padding:8px 0;color:#1b263b;font-weight:600}
+
+/* ───────── Modal (영상 + 지도) ───────── */
+.modal{
+  display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);
+  z-index:1000;align-items:center;justify-content:center
+}
+.modal-content{
+  background:#1b263b;display:flex;gap:24px;width:95%;max-width:1280px;
+  max-height:90vh;padding:20px;border-radius:10px;color:#e9ecef;
+  position:relative
+}
+.modal-content video{
+  flex:1 1 55%;height:100%;object-fit:cover;border-radius:6px
+}
+#modalMap{flex:1 1 45%;height:100%;border-radius:6px}
+#modalInfo{font-size:15px;line-height:1.5;margin-top:10px}
+.close-button{
+  color:#f1f3f5;font-size:28px;cursor:pointer;
+  position:absolute;top:12px;right:18px
+}
+
+/* ───────── 교체모드 표시 ───────── */
+.swap-src{outline:3px solid #66d9ff}
+.swap-tgt{outline:3px dashed #ffc107}
+
+/* ───────── 로그 항목(굵게, 보기 쉽게) ───────── */
+.log-item{
+  background:#243447;
+  padding:10px 14px;
+  border-radius:6px;
+  color:#e9ecef;
+  font-weight:600;
+  margin-bottom:10px;
+  cursor:pointer;
+  transition:background .15s;
+}
+.log-item:hover{background:#314057}

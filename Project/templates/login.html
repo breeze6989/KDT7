@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <title>로그인 - 화재 대시보드</title>
+  <!-- 기존 대시보드 CSS 재사용 -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+  <style>
+    /* 로그인 폼 추가 스타일 */
+    body { background: #0d1b2a; color: #f1f3f5; font-family: 'Segoe UI','Pretendard','Noto Sans KR',sans-serif; }
+    .login-container {
+      max-width: 400px; margin: 100px auto; padding: 20px;
+      background: #1b263b; border: 1px solid #314057; border-radius: 8px;
+    }
+    .login-container h2 { text-align: center; color: #66d9ff; margin-bottom: 20px; }
+    .form-group { margin-bottom: 15px; }
+    .form-group label { display: block; margin-bottom: 5px; font-weight: 600; }
+    .form-group input {
+      width: 100%; padding: 8px; border: 1px solid #ced4da;
+      border-radius: 4px; font-size: 14px;
+    }
+    .form-group input:focus { outline: none; border-color: #66d9ff; }
+    .btn {
+      width: 100%; padding: 10px; margin-top: 10px;
+      background: #66d9ff; border: none; border-radius: 4px;
+      font-size: 16px; font-weight: 700; color: #1b263b; cursor: pointer;
+    }
+    .btn:hover { background: #57c0e8; }
+    .error { color: #ff6b6b; text-align: center; margin-bottom: 15px; }
+  </style>
+</head>
+<body>
+  <div class="login-container">
+    <h2>로그인</h2>
+    {% if error %}
+      <p class="error">{{ error }}</p>
+    {% endif %}
+    <form method="POST" action="{{ url_for('login') }}">
+      <div class="form-group">
+        <label for="username">아이디</label>
+        <input type="text" name="username" id="username" required>
+      </div>
+      <div class="form-group">
+        <label for="password">비밀번호</label>
+        <input type="password" name="password" id="password" required>
+      </div>
+      <button type="submit" class="btn">로그인</button>
+    </form>
+  </div>
+</body>
+</html>
