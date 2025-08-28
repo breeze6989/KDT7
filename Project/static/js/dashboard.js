@@ -58,23 +58,6 @@ document.addEventListener('DOMContentLoaded', () => {
   }
   fetch('/api/dashboard_data').then(r=>r.json()).then(render);
 
-  /* ── 5초 주기 상태-라벨 폴링 ───────────────── */
-  function diffUpdate(d){
-    d.cctv_list.forEach(c=>{
-      const card = document.querySelector(`.grid-item[data-id='${c.id}']`);
-      if(!card) return;
-      if(card.dataset.status !== c.status){
-        card.dataset.status = c.status;
-        const s = card.querySelector('.status');
-        s.textContent = c.status;
-        s.className   = 'status '+c.status;
-      }
-    });
-    document.getElementById('fireCnt').textContent =
-        d.cctv_list.filter(c=>c.status==='화재감지').length;
-    document.getElementById('warnCnt').textContent =
-        d.cctv_list.filter(c=>c.status==='주의').length;
-  }
-  setInterval(()=>fetch('/api/dashboard_data')
-               .then(r=>r.json()).then(diffUpdate), 500);
+
 });
+
