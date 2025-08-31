@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <title>상황 로그</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+  <!-- dashboard.html & logs.html <head> 안에 공통으로 추가 -->
+  <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+</head>
+<body>
+<header class="header">
+  <h1>상황 로그</h1>
+  <div class="header-right">
+    <a href="{{ url_for('dashboard') }}" class="layout-btn">대시보드로</a>
+    <a href="{{ url_for('logout') }}"    class="layout-btn">로그아웃</a>
+  </div>
+</header>
+
+<div class="dashboard-grid" style="max-width:900px;margin:auto">
+  {% for l in logs %}
+    <div class="log-item"
+         data-stream="{{ url_for('static',
+                                 filename='videos/' ~ (l.src | basename)) }}"
+         data-lat="{{ l.lat }}"
+         data-lng="{{ l.lng }}"
+         data-msg="{{ l.msg }}"
+         data-ts="{{ l.ts }}"
+         data-cctvid="{{ l.cctv_id }}"
+         data-status="화재감지">
+      <strong>{{ l.ts }}</strong><br>{{ l.msg }}
+    </div>
+  {% endfor %}
+</div>
+
+<!-- 페이지네이션 -->
+<div style="text-align:center;margin:24px">
+  {% for p in range(1, page_cnt+1) %}
+    {% if p == page %}
+      <span style="color:#66d9ff;font-weight:700;margin:0 6px">{{ p }}</span>
+    {% else %}
+      <a href="{{ url_for('show_logs', page=p) }}"
+         style="margin:0 6px;color:#e9ecef">{{ p }}</a>
+    {% endif %}
+  {% endfor %}
+</div>
+
+{% include 'modal_snippet.html' %}
+<script src="{{ url_for('static', filename='js/modal.js') }}"></script>
+</body>
+</html>

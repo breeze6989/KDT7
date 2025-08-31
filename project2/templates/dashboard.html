@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <title>화재 감지 대시보드</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+  <!-- HLS -->
+  <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+</head>
+<body>
+<header class="header">
+  <h1>화재 감지 대시보드</h1>
+  <div class="header-right">
+    <div class="layout-dropdown-container">
+      <div id="layoutBtn" class="layout-toggle-button">배열 4 x 3</div>
+      <div id="layoutMenu" class="dropdown-menu">
+        <div class="dropdown-item" data-layout="4x3">4 x 3</div>
+        <div class="dropdown-item" data-layout="5x3">5 x 3</div>
+        <div class="dropdown-item" data-layout="5x4">5 x 4</div>
+        <div class="dropdown-item" data-layout="2x2">2 x 2</div>
+      </div>
+    </div>
+    <a href="{{ url_for('show_logs') }}" class="layout-toggle-button">상황 로그 페이지</a>
+    <a href="{{ url_for('logout') }}" class="layout-toggle-button">로그아웃</a>
+  </div>
+</header>
+
+<div style="display:flex;height:calc(100vh - 60px);">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <h2>상황 로그</h2>
+    <ul id="sidebarLogUl" class="sidebar-log"></ul>
+    <a href="{{ url_for('show_logs') }}" class="all-log-link">전체 보기</a>
+
+    <h2 style="margin-top:16px">사건 신고 현황</h2>
+    <div class="sidebar-log">
+      <div>[2025-07-29 09:00] #2 구역 소각 신고 (마포구)</div>
+      <div>[2025-07-29 08:30] #6 구역 영농폐기물 소각 신고 (서초구)</div>
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <section class="dashboard-grid">
+    <div class="grid-header">
+      <div>총 CCTV <span id="totalCCTVs">0</span></div>
+      <div>화재 <span id="fireCnt">0</span></div>
+      <div>주의 <span id="warnCnt">0</span></div>
+    </div>
+    <div id="gridContainer" class="grid-container grid-container-4x3"></div>
+  </section>
+</div>
+
+<!-- 모달 기본 스타일 -->
+<style>
+.modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:1000;align-items:center;justify-content:center}
+.modal-content{background:#1b263b;width:95%;max-width:1280px;max-height:90vh;padding:12px;border-radius:8px;position:relative}
+.modal .close-button{position:absolute;top:8px;right:12px;color:#fff;font-size:28px;cursor:pointer}
+.video-box{position:relative}
+.video-box .box-layer{position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:none}
+.status-badge{position:absolute;left:50%;top:8px;transform:translateX(-50%);padding:4px 10px;border-radius:14px;font-weight:700;color:#fff;background:#2d6a4f}
+.status-badge.status-fire{background:#e03131}
+.status-badge.status-warn{background:#f08c00}
+</style>
+
+<script src="{{ url_for('static', filename='js/dashboard.js') }}" defer></script>
+</body>
+</html>

@@ -1,0 +1,20 @@
+<!-- 모달 공통 조각 -->
+<div id="cctvModal" class="modal">
+  <div class="modal-content">
+    <span class="close-button">×</span>
+
+    <!-- 왼쪽 : 영상 -->
+    <video id="modalVideo" autoplay muted></video>
+
+    <!-- 오른쪽 : 지도 + 정보 -->
+    <div style="flex:1 1 45%;display:flex;flex-direction:column">
+      <div id="modalMap"  style="flex:1 1 70%;border-radius:6px"></div>
+
+      <!-- ✅ 메타 정보 영역 -->
+      <div id="modalInfo"
+           style="flex:1 1 30%;padding-top:8px;
+                  font-size:15px;line-height:1.4"></div>
+    </div>
+  </div>
+</div>
+
